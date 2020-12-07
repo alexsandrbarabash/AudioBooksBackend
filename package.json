@@ -1,0 +1,23 @@
+{
+  "name": "audiobooksbackend",
+  "version": "1.0.0",
+  "description": "This repository is a backend for the chetc application. Developed on node js.",
+  "main": "index.js",
+  "scripts": {
+    "start": "index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alexsandrbarabash/AudioBooksBackend.git"
+  },
+  "author": "Alexander Barabash <sbarabas176@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/alexsandrbarabash/AudioBooksBackend/issues"
+  },
+  "homepage": "https://github.com/alexsandrbarabash/AudioBooksBackend#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
