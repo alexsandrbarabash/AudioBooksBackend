@@ -4,7 +4,8 @@
   "description": "This repository is a backend for the chetc application. Developed on node js.",
   "main": "index.js",
   "scripts": {
-    "start": "index.js",
+    "start": "node index.js",
+    "server": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -18,6 +19,11 @@
   },
   "homepage": "https://github.com/alexsandrbarabash/AudioBooksBackend#readme",
   "dependencies": {
-    "express": "^4.17.1"
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "sqlite3": "^5.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.6"
   }
 }
