@@ -12,7 +12,7 @@ app.use(bodyParser.json());
 
 app.use(express.static(__dirname + "/public"));
 
-app.use("/player", database);
+app.use("/player", player);
 
 app.listen(PORT, () => {
   console.log(`Server start on port ${PORT}`);
