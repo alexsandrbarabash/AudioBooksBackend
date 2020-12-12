@@ -14,6 +14,7 @@ app.use(express.static(__dirname + "/public"));
 //routers
 app.use("/player", require("./routers/player"));
 app.use("/registration", require("./routers/registration"));
+app.use("/login", require("./routers/login"));
 
 app.listen(PORT, () => {
   console.log(`Server start on port ${PORT}`);

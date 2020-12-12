@@ -38,17 +38,16 @@ router.post(
         }
 
         if (!row) {
+          db.close((err) => {
+            if (err) {
+              return console.log(err.message);
+            }
+            console.log("Disconnection to the database");
+          });
           next();
         } else {
           res.status(400).json({ message: "Such a user exists" });
         }
-      });
-
-      db.close((err) => {
-        if (err) {
-          return console.log(err.message);
-        }
-        console.log("Disconnection to the database");
       });
     } catch (e) {
       console.log(e.message);
@@ -57,7 +56,7 @@ router.post(
   }
 );
 
-router.post("/", async (req, res, next) => {
+router.post("/", async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -77,7 +76,7 @@ router.post("/", async (req, res, next) => {
         if (err) {
           return console.log(err.message);
         }
-        res.json("Ok");
+        res.json("Ok"); // відправляти шо?
       }
     );
 
