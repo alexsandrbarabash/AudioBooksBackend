@@ -13,7 +13,7 @@ app.use(express.static(__dirname + "/public"));
 app.use("/player", require("./routers/player"));
 app.use("/registration", require("./routers/registration"));
 app.use("/login", require("./routers/login"));
-//app.use("/data", require("./routers/getData"));
+app.use("/data", require("./routers/getData"));
 app.use("/search", require("./routers/search"));
 
 app.listen(PORT, () => {
