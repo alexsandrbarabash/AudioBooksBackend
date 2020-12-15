@@ -5,8 +5,8 @@ const bcrypt = require("bcryptjs");
 const sqlite3 = require("sqlite3").verbose();
 
 router.post(
-  "/",
-  [body("email").isEmail(), body("password").isLength({ min: 6 })],
+  "/check",
+  [body("email").isEmail(), body("password").isLength({ min: 6, max: 50 })],
   async (req, res, next) => {
     try {
       const errors = validationResult(req);
@@ -18,7 +18,7 @@ router.post(
         });
       }
 
-      const { email, password } = req.body;
+      const { email, password, name } = req.body;
 
       //check if the user is in the database
       const db = await new sqlite3.Database(
@@ -44,7 +44,7 @@ router.post(
             }
             console.log("Disconnection to the database");
           });
-          next();
+          res.json("Ok");
         } else {
           res.status(400).json({ message: "Such a user exists" });
         }
@@ -56,9 +56,9 @@ router.post(
   }
 );
 
-router.post("/", async (req, res) => {
+router.post("/", async (req, res, next) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, name } = req.body;
 
     const db = await new sqlite3.Database("./library.db", (err) => {
       if (err) {
@@ -68,26 +68,57 @@ router.post("/", async (req, res) => {
     });
 
     const hashedPassword = await bcrypt.hash(password, 12);
-
     await db.run(
-      `INSERT INTO users (email, password) VALUES (?, ?);`,
-      [email, hashedPassword],
+      `INSERT INTO users (email, password, name) VALUES (?, ?, ?);`,
+      [email, hashedPassword, name],
       (err) => {
         if (err) {
           return console.log(err.message);
         }
-        res.json("Ok"); // відправляти шо?
+        db.close((err) => {
+          if (err) {
+            return console.log(err.message);
+          }
+          console.log("Disconnection to the database");
+        });
+        console.log("scfif");
+        next();
       }
     );
+  } catch (e) {
+    console.log(e.message);
+    res.status(500).json({ message: "something bad" });
+  }
+});
 
-    await db.close((err) => {
+router.post("/", async (req, res, next) => {
+  try {
+    const { email, password, name } = req.body;
+
+    const db = await new sqlite3.Database("./library.db", (err) => {
+      if (err) {
+        return console.log(err.message);
+      }
+      console.log("Connection to the database");
+    });
+
+    db.get(`SELECT id FROM users WHERE email=?;`, [email], (err, row) => {
+      if (err) {
+        console.log("sdf", "sdfl");
+        return console.log(err);
+      }
+
+      console.log("sdf", row);
+      res.json(row);
+    });
+
+    db.close((err) => {
       if (err) {
         return console.log(err.message);
       }
       console.log("Disconnection to the database");
     });
   } catch (e) {
-    console.log(e.message);
     res.status(500).json({ message: "something bad" });
   }
 });
