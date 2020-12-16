@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const sqlite3 = require("sqlite3").verbose();
+const { host } = require("../host");
 
 router.get("/selection", async (req, res, next) => {
   try {
@@ -12,7 +13,7 @@ router.get("/selection", async (req, res, next) => {
       const db = await new sqlite3.Database("./library.db");
 
       await db.all(
-        `SELECT b.id, b.title, b.artwork, b.about, gb.gener, ab.autor, l.LIKE
+        `SELECT b.id, b.title, ( ? || b.artwork) AS image, b.about, gb.gener, ab.autor, l.LIKE
          FROM (SELECT * FROM selection WHERE id=?) s
          INNER JOIN selection_book sb ON s.id=sb.selection_id
          INNER JOIN books b ON sb.book_id=b.id
@@ -22,7 +23,7 @@ router.get("/selection", async (req, res, next) => {
          INNER JOIN autors a ON autor_book.autor_id = a.id GROUP BY book_id) ab ON b.id=ab.book_id
          LEFT JOIN (SELECT ub.user_id, ub.book_id, (CASE WHEN ub.book_id == NULL THEN 0 ELSE 1 END) AS LIKE  FROM users
          INNER JOIN user_book ub ON users.id = ub.user_id WHERE ub.user_id=?) l ON l.book_id=b.id;`,
-        [selectionId, token],
+        [host, selectionId, token],
         (err, row) => {
           res.json(row);
         }
@@ -63,8 +64,8 @@ router.get("/selection", async (req, res) => {
     const db = await new sqlite3.Database("./library.db");
 
     await db.all(
-      `SELECT id, title FROM selection s where s.is_selection=1;`,
-      [],
+      `SELECT id, title,  ( ? || artwork) AS image FROM selection s where s.is_selection=1;`,
+      [host],
       (err, row) => {
         res.json(row);
       }
@@ -105,15 +106,15 @@ router.get("/book", async (req, res) => {
     const db = await new sqlite3.Database("./library.db");
 
     await db.all(
-      `SELECT b.id, b.title, b.artwork, b.about, gb.gener, ab.autor, 1 AS LIKE
-       FROM (SELECT * FROM users WHERE id=3) u
+      `SELECT b.id, b.title, ( ? || b.artwork) AS image, b.about, gb.gener, ab.autor, 1 AS LIKE
+       FROM (SELECT * FROM users WHERE id=?) u
        INNER JOIN user_book ub ON u.id= ub.user_id
        INNER JOIN books b ON ub.book_id=b.id
        INNER JOIN (SELECT book_id, group_concat(g.name) AS gener FROM gener_book
        INNER JOIN geners g ON gener_book.gener_id = g.id GROUP BY book_id) gb ON b.id=gb.book_id
        INNER JOIN (SELECT book_id, group_concat(a.name) AS autor FROM autor_book
        INNER JOIN autors a ON autor_book.autor_id = a.id GROUP BY book_id) ab ON b.id=ab.book_id;`,
-      [token],
+      [host, token],
       (err, row) => {
         res.json(row);
       }
