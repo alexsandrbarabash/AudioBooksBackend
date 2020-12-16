@@ -106,14 +106,14 @@ router.get("/book", async (req, res) => {
     const db = await new sqlite3.Database("./library.db");
 
     await db.all(
-      `SELECT b.id, b.title, ( ? || b.artwork) AS image, b.about, gb.gener, ab.autor, 1 AS isLiked
-       FROM (SELECT * FROM users WHERE id=?) u
-       INNER JOIN user_book ub ON u.id= ub.user_id
-       INNER JOIN books b ON ub.book_id=b.id
-       INNER JOIN (SELECT book_id, group_concat(g.name) AS gener FROM gener_book
-       INNER JOIN geners g ON gener_book.gener_id = g.id GROUP BY book_id) gb ON b.id=gb.book_id
-       INNER JOIN (SELECT book_id, group_concat(a.name) AS autor FROM autor_book
-       INNER JOIN autors a ON autor_book.autor_id = a.id GROUP BY book_id) ab ON b.id=ab.book_id;`,
+      `SELECT b.id, b.title, ( ? || b.artwork) AS image, b.about, gb.gener, ab.autor, l.isLiked, b.duration, b.chaptersCount
+      FROM books b
+      INNER JOIN (SELECT book_id, group_concat(g.name) AS gener FROM gener_book
+      INNER JOIN geners g ON gener_book.gener_id = g.id GROUP BY book_id) gb ON b.id=gb.book_id
+      INNER JOIN (SELECT book_id, group_concat(a.name) AS autor FROM autor_book
+      INNER JOIN autors a ON autor_book.autor_id = a.id GROUP BY book_id) ab ON b.id=ab.book_id
+      LEFT JOIN (SELECT ub.user_id, ub.book_id, (CASE WHEN ub.book_id == NULL THEN 0 ELSE 1 END) AS isLiked  FROM users
+      INNER JOIN user_book ub ON users.id = ub.user_id WHERE ub.user_id=?) l ON l.book_id=b.id;`,
       [host, token],
       (err, row) => {
         res.json(row);
