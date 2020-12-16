@@ -13,7 +13,7 @@ router.get("/selection", async (req, res, next) => {
       const db = await new sqlite3.Database("./library.db");
 
       await db.all(
-        `SELECT b.id, b.title, ( ? || b.artwork) AS image, b.about, gb.gener, ab.autor, l.LIKE
+        `SELECT b.id, b.title, ( ? || b.artwork) AS image, b.about, gb.gener, ab.autor, l.isLiked
          FROM (SELECT * FROM selection WHERE id=?) s
          INNER JOIN selection_book sb ON s.id=sb.selection_id
          INNER JOIN books b ON sb.book_id=b.id
@@ -106,7 +106,7 @@ router.get("/book", async (req, res) => {
     const db = await new sqlite3.Database("./library.db");
 
     await db.all(
-      `SELECT b.id, b.title, ( ? || b.artwork) AS image, b.about, gb.gener, ab.autor, 1 AS LIKE
+      `SELECT b.id, b.title, ( ? || b.artwork) AS image, b.about, gb.gener, ab.autor, 1 AS isLiked
        FROM (SELECT * FROM users WHERE id=?) u
        INNER JOIN user_book ub ON u.id= ub.user_id
        INNER JOIN books b ON ub.book_id=b.id
