@@ -105,6 +105,8 @@ router.post("/", async (req, res) => {
         res.json(row); // відправляти шо ? id
       }
     );
+
+    db.close();
   } catch (e) {
     console.log(e.message);
     res.status(500).json({ message: "something bad" });
