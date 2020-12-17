@@ -143,4 +143,23 @@ router.get("/book", async (req, res) => {
   }
 });
 
+// get user data
+router.get("/", async (req, res) => {
+  try {
+    const token = req.query.token;
+    if (!token) {
+      res.status(500).json({ message: "something bad" });
+    }
+    //
+    const db = await new sqlite3.Database("./library.db");
+    await db.get("SELECT * FROM users WHERE id=?;", [token], (err, row) => {
+      res.json(row);
+    });
+
+    db.close();
+  } catch (e) {
+    res.status(500).json({ message: "something bad" });
+  }
+});
+
 module.exports = router;
