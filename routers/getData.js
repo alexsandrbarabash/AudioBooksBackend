@@ -78,21 +78,38 @@ router.get("/selection", async (req, res) => {
 });
 
 //favorites genres user
-router.get("/genres", async (req, res) => {
+router.get("/genres", async (req, res, next) => {
   try {
     const token = req.query.token;
-    const db = await new sqlite3.Database("./library.db");
+    if (!token) {
+      next();
+    } else {
+      const db = await new sqlite3.Database("./library.db");
 
-    await db.all(
-      `SELECT g.id, g.name FROM geners g
+      await db.all(
+        `SELECT g.id, g.name FROM geners g
        INNER JOIN gener_user gu on g.id = gu.gener_id
        INNER JOIN users u on u.id = gu.user_id WHERE u.id=? ORDER BY g.id;`,
-      [token],
-      (err, row) => {
-        res.json(row);
-      }
-    );
+        [token],
+        (err, row) => {
+          res.json(row);
+        }
+      );
 
+      db.close();
+    }
+  } catch (e) {
+    res.status(500).json({ message: "something bad" });
+  }
+});
+
+//all genres
+router.get("/genres", async (req, res) => {
+  try {
+    const db = await new sqlite3.Database("./library.db");
+    await db.all(`SELECT * FROM geners;`, [], (err, row) => {
+      res.json(row);
+    });
     db.close();
   } catch (e) {
     res.status(500).json({ message: "something bad" });

@@ -15,6 +15,7 @@ app.use("/registration", require("./routers/registration"));
 app.use("/login", require("./routers/login"));
 app.use("/data", require("./routers/getData"));
 app.use("/search", require("./routers/search"));
+app.use("/setdb", require("./routers/setData"));
 
 app.listen(PORT, () => {
   console.log(`Server start on port ${PORT}`);
