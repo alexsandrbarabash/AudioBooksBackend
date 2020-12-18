@@ -32,33 +32,29 @@ router.post(
         }
       );
 
-      await db.get(
-        `SELECT * FROM users WHERE email=?`,
-        [email],
-        async (err, row) => {
-          if (err) {
-            return console.log(err.message);
-          }
-
-          if (row) {
-            await db.close((err) => {
-              if (err) {
-                return console.log(err.message);
-              }
-              console.log("Disconnection to the database");
-            });
-            next();
-          } else {
-            await db.close((err) => {
-              if (err) {
-                return console.log(err.message);
-              }
-              console.log("Disconnection to the database");
-            });
-            res.status(400).json({ message: "Such a user exists" });
-          }
+      await db.get(`SELECT * FROM users WHERE email=?`, [email], (err, row) => {
+        if (err) {
+          return console.log(err.message);
         }
-      );
+
+        if (row) {
+          db.close((err) => {
+            if (err) {
+              return console.log(err.message);
+            }
+            console.log("Disconnection to the database");
+          });
+          next();
+        } else {
+          db.close((err) => {
+            if (err) {
+              return console.log(err.message);
+            }
+            console.log("Disconnection to the database");
+          });
+          res.status(400).json({ message: "Such a user exists" });
+        }
+      });
     } catch (e) {
       console.log(e.message);
       res.status(500).json({ message: "something bad" });

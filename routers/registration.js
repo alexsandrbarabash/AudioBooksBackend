@@ -104,11 +104,9 @@ router.post("/", async (req, res, next) => {
 
     db.get(`SELECT id FROM users WHERE email=?;`, [email], (err, row) => {
       if (err) {
-        console.log("sdf", "sdfl");
         return console.log(err);
       }
 
-      console.log("sdf", row);
       res.json(row);
     });
 

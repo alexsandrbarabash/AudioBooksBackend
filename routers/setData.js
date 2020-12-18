@@ -13,6 +13,9 @@ router.post("/", async (req, res, next) => {
       value = value + `(${token}, ${item}), `;
     });
 
+    console.log(likeGeners);
+    console.log(token);
+
     await db.run(
       `INSERT INTO gener_user (user_id, gener_id) VALUES ${value.slice(
         0,
@@ -20,6 +23,9 @@ router.post("/", async (req, res, next) => {
       )};`,
       [],
       (err) => {
+        if (err) {
+          console.log(err);
+        }
         res.send("Ok");
       }
     );
