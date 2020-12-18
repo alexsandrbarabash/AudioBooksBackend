@@ -52,7 +52,6 @@ router.post("/LIKE", async (req, res) => {
       }
     );
     db.close();
-    res.status(200).send("Ok");
   } catch (e) {
     console.log(e);
     res.status(500).json({ message: "something bad" });
@@ -75,7 +74,6 @@ router.post("/DISLIKE", async (req, res) => {
       }
     );
     db.close();
-    res.status(200).send("Ok");
   } catch (e) {
     console.log(e);
     res.status(500).json({ message: "something bad" });
